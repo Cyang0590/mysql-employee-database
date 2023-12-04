@@ -12,7 +12,7 @@ const db = mysql.createConnection(
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
   },
-  console.log(`Connected to the movies_db database.`)
+  console.log(`Connected to the employee_db database.`)
 );
 
 start()
@@ -83,13 +83,13 @@ function viewEmployees() {
 function addDepartment() {
   inquirer.prompt([
     {
-      message: 'enter the department name',
+      message: 'Enter the new department name',
       name: 'name',
     },
   ])
     .then(answers => {
 
-      db.query(`INSERT INTO departments(department_name) values(${answers.name})`, (err, res) => {
+      db.query(`INSERT INTO departments(department_name) VALUES ('${answers.name}')`, (err, res) => {
         if (err) throw err
         console.table(res)
         start()
@@ -100,21 +100,57 @@ function addDepartment() {
 function addRole() {
   inquirer.prompt([
     {
-      message: 'enter your role',
-      name: 'name',
+      message: 'Enter your new role',
+      name: 'role',
     },
+    {
+      message: 'Enter your salary',
+      name: 'salary',
+    },
+    {
+      type: 'list',
+      message: 'Please select the depatment for this role',
+      name: 'dapartmentId',
+      choices: departments.department_name,
+      
+    },
+
   ])
     .then(answers => {
 
-      db.query(`INSERT INTO roles(title) values(${answers.name})`, (err, res) => {
+      db.query(`INSERT INTO roles SET ?`, (err, res) => {
         if (err) throw err
         console.table(res)
         start()
       })
+    
     })
 }
 
 function addEmployee() {
+  inquirer.prompt([
+    {
+      message: 'Please enter the first name of the employee',
+      name: 'firstName',
+    },
+    {
+      message: 'Please enter the last name of the employee',
+      name: 'lastName',
+    },
+    {
+      type: 'list',
+      message: 'Please select the employee role',
+      name: 'roleId',
+      choices: ['department'],
+    },
+    {
+      type: 'list',
+      message: 'Please select the employee manager',
+      name: 'managerId',
+      choices: '',
+    },
+
+  ])
   db.query("SELECT * FROM employees", (err, res) => {
     if (err) throw err
     console.table(res)
